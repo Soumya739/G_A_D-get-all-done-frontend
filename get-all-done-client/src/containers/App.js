@@ -1,0 +1,81 @@
+import React, { Component } from 'react'
+import Home from '../components/Home'
+// import { Redirect, useHistory } from 'react-router-dom';
+// import { api } from '../services/api';
+
+// const PostsURL = "http://localhost:3000/posts"
+class App extends Component {
+    constructor() {
+        super()
+        this.state = {
+            signup: false,
+            login: false,
+            loggedIn: false,
+            posts: [],
+            // auth: {
+            //     user: {}
+            // }
+        }
+    }
+
+    // componentDidMount() {
+    //     const token = localStorage.getItem('token');
+    //     if (token) {
+    //         // make a request to the backend and find our user
+    //         api.auth.getCurrentUser().then(user => {
+    //             console.log(user)
+    //             const updatedState = { ...this.state.auth, user: user };
+    //             this.setState({ auth: updatedState });
+    //         });
+    //     }
+
+    //     fetch(PostsURL)
+    //         .then(resp => resp.json())
+    //         .then(posts => {
+    //             console.log(posts)
+    //             this.setState({ posts: posts })
+    //         })
+    // }
+
+    onSignUp = () => {
+        this.setState({ signup: !this.state.signup, login: false })
+    }
+
+    onLogin = (data) => {
+        // this.setState({ auth: updatedState)}
+        // const updatedState = { ...this.state.auth, user: data };
+        // localStorage.setItem('token', data.jwt);
+        this.setState({ login: !this.state.login, signup: false });
+    }
+
+    onLoggedIn = () => {
+        this.setState({ loggedIn: true })
+    }
+
+    onLogOut = () => {
+        localStorage.removeItem('token');
+        this.setState({ auth: { user: {} }, signup: false, login: false, posts: [], loggedIn: false }, window.location.replace("http://localhost:3001/"));
+        // this.setState({ signup: false, login: false, posts: [], loggedIn: false })
+
+    }
+
+    render() {
+        let { signup, login, loggedIn, posts } = this.state
+        return (
+            <div>
+                <Home
+                    signup={signup}
+                    login={login}
+                    loggedIn={loggedIn}
+                    posts={posts}
+                    onSignUp={this.onSignUp}
+                    onLogin={this.onLogin}
+                    onLoggedIn={this.onLoggedIn}
+                    onLogOut={this.onLogOut}
+                />
+            </div>
+        )
+    }
+}
+
+export default App
