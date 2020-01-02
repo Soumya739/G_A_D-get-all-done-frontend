@@ -1,9 +1,7 @@
 import React, { Component } from 'react'
 import { Redirect, NavLink } from 'react-router-dom';
-// import { api } from '../services/api'
-// import Home from './Home'
-
-const URL = "http://localhost:3000"
+import { api } from '../services/api'
+// import Home from '../components/Home'
 
 export class SignupForm extends Component {
     // let { onSetCurrentUser, onsignUp, onLoggedIn, signup } = this.props
@@ -54,85 +52,21 @@ export class SignupForm extends Component {
     }
 
     handleFormSubmit = (e) => {
+        e.preventDefault();
         let { onSignUp, onLoggedIn, onLogin } = this.props
-        let { username, email, phone, country, city, contractee, contractor, password, services } = this.state
-
-        // api.user.createUser(this.state).then(res => {
-        //     if (!res.error) {
-        //         onLogin(res);
-        //         // this.props.history.push('/');
-        //     } else {
-        //         this.setState({ error: true });
-        //     }
-        // })
-        fetch(URL + "/users", {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json',
-                Accepts: 'application/json'
-            },
-            body: JSON.stringify({
-                username: username,
-                email: email,
-                city: city,
-                country: country,
-                phone: phone,
-                contractee: contractee,
-                contractor: contractor
-            })
-        }).then(handleErrors)
-            .then(response => response.json())
-            .then(user => {
-                console.log(user);
-                if (contractor) {
-                    // createContractor(user, data)
-                    console.log("creating contractor")
-                    fetch(URL + "/contractors", {
-                        method: "POST",
-                        headers: {
-                            'Content-Type': 'application/json',
-                            Accepts: 'application/json'
-                        },
-                        body: JSON.stringify({
-                            user_id: user.id,
-                            projects_completed: 0,
-                            password: password,
-                            services: services
-                        })
-                    })
-                        .then(handleErrors)
-                        .then(response => response.json())
-                        .then(json => {
-                            console.log(json)
-                            this.currentUserStatus("contractor")
-                        })
-                    // .then(currentUser => {
-                    //     onSetCurrentUser("contractor")
-                    // })
-
-                } else {
-                    // createContractee(user, data)
-                    console.log("creating contractee")
-                    fetch(URL + "/contractees", {
-                        method: "POST",
-                        headers: {
-                            'Content-Type': 'application/json',
-                            Accepts: 'application/json'
-                        },
-                        body: JSON.stringify({
-                            user_id: user.id,
-                            password: password
-                        })
-                    }).then(handleErrors)
-                        .then(response => response.json())
-                        .then(json => {
-                            console.log(json)
-                            this.currentUserStatus("contractee")
-                        })
-                    //         .then(currentUser => {
-                    //             onSetCurrentUser("contractee")
-                    //         }
-                }
+        api.user.createUser(this.state).then(res => {
+            console.log("resp", res)
+            if (!res.error) {
+                onLogin(res);
+                // this.props.history.push('/');
+            } else {
+                this.setState({ error: true });
+            }
+        })
+            .then(() => {
+                this.submittedStatus()
+                onSignUp()
+                onLoggedIn()
             })
             .then(this.setState({
                 username: "",
@@ -144,11 +78,9 @@ export class SignupForm extends Component {
                 contractor: false,
                 password: ""
             }))
+
             .catch(error => console.log(error));
-        this.submittedStatus()
-        onSignUp()
-        onLoggedIn()
-        onLogin()
+
     }
 
     render() {
@@ -198,13 +130,6 @@ export class SignupForm extends Component {
             )
         }
     }
-}
-
-function handleErrors(response) {
-    if (!response.ok) {
-        throw Error(response.statusText);
-    }
-    return response;
 }
 
 export default SignupForm

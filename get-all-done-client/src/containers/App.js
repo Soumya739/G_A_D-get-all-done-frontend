@@ -12,9 +12,9 @@ class App extends Component {
             login: false,
             loggedIn: false,
             posts: [],
-            // auth: {
-            //     user: {}
-            // }
+            auth: {
+                user: {}
+            }
         }
     }
 
@@ -42,10 +42,9 @@ class App extends Component {
     }
 
     onLogin = (data) => {
-        // this.setState({ auth: updatedState)}
-        // const updatedState = { ...this.state.auth, user: data };
-        // localStorage.setItem('token', data.jwt);
-        this.setState({ login: !this.state.login, signup: false });
+        const updatedState = { ...this.state.auth, user: data };
+        localStorage.setItem('token', data.jwt);
+        this.setState({ auth: updatedState, login: !this.state.login, signup: false });
     }
 
     onLoggedIn = () => {
