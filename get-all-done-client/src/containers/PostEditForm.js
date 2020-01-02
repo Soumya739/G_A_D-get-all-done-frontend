@@ -1,12 +1,16 @@
 import React, { Component } from 'react'
 // import { NavLink } from 'react-router-dom';
+import { api } from '../services/api'
+import { Redirect } from 'react-router-dom'
 
 export class PostEditForm extends Component {
     constructor(props) {
         super(props)
         this.state = {
             title: this.props.post.title,
-            discription: this.props.post.discription
+            description: this.props.post.description,
+            category: this.props.post.category.tag,
+            errorReason: ""
         }
     }
 
@@ -15,36 +19,45 @@ export class PostEditForm extends Component {
     }
 
     handleEditFormSubmit = (e) => {
+        let { post } = this.props
         e.preventDefault()
-        // fetch(POSTS_URL + '/' + post.id, {
-        //     method: 'PUT',
-        //     headers: {
-        //       'Content-Type': 'application/json',
-        //       Accept: 'application/json'
-        //     },
-        //     body: JSON.stringify(post)
-        //   })
-
+        api.posts.updatePosts(post.id, this.state).then(res => {
+            if (!res.error) {
+                this.props.onEditPost()
+            } else {
+                this.setState({ errorReason: res.error });
+            }
+        })
     }
 
     render() {
-        return (
-            <div>
-                <div className='space_between_lines'>
-                    Edit Post
+        // if (this.state.submitted === true) {
+        //     return <Redirect to="/timeline" />
+        // } else 
+        if (this.state.errorReason !== "") {
+            return <h2>this.state.errorReason</h2>
+        }
+        else {
+            return (
+                <div>
+                    <div className='space_between_lines'>
+                        Edit Post
                 <form onSubmit={(e) => this.handleEditFormSubmit(e)} className='space_between_lines'>
-                        <label>Title:</label>
-                        <input type='text' placeholder='title' id="title" onChange={(e) => this.handleInputData(e)} value={this.state.title} required /><br />
-                        <label>Discription:</label>
-                        <input type='text' placeholder='discription' id="discription" onChange={(e) => this.handleInputData(e)} value={this.state.discription} required /><br />
+                            <label>Title:</label>
+                            <input type='text' placeholder='title' id="title" onChange={(e) => this.handleInputData(e)} value={this.state.title} required /><br />
+                            <label>Description:</label>
+                            <input type='text' placeholder='description' id="description" onChange={(e) => this.handleInputData(e)} value={this.state.description} required /><br />
+                            <label>Category:</label>
+                            <input type='text' placeholder='category' id="category" onChange={(e) => this.handleInputData(e)} value={this.state.category} required /><br />
 
-                        <input type='submit' value="Save" />
-                    </form>
-                    {/* {this.state.submitted ? <h2>Submitted</h2> : <></>} */}
-                    <button onClick={this.props.onEditPost}>Cancel</button>
+                            <input type='submit' value="Save" />
+                        </form>
+                        {/* {this.state.submitted ? <h2>Submitted</h2> : <></>} */}
+                        <button onClick={this.props.onEditPost}>Cancel</button>
+                    </div>
                 </div>
-            </div>
-        )
+            )
+        }
     }
 }
 

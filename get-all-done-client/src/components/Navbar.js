@@ -5,10 +5,10 @@ import { api } from '../services/api';
 export class Navbar extends Component {
 
     displayNavbar = () => {
-        let currentUserStatus = api.user.currentUserStatus
-        const { onLogin, onSignUp, loggedIn, onLogOut } = this.props
-        if (loggedIn) {
-            if (currentUserStatus === "contractee") {
+        const { onLogin, onSignUp, onLogOut } = this.props
+        if (!!(localStorage.getItem("token"))) {
+            let currentUserType = api.user.getcurrentUserType()
+            if (currentUserType === "contractee") {
                 return <>
                     <NavLink to="/home"><button>Home</button></NavLink>
                     <NavLink to="/profile"><button>Profile</button></NavLink>
@@ -16,7 +16,7 @@ export class Navbar extends Component {
                     <NavLink to="/timeline"><button>Timeline</button></NavLink>
                     <button onClick={onLogOut}>Logout</button>
                 </>
-            } else if (currentUserStatus === "contractor") {
+            } else if (currentUserType === "contractor") {
                 return <>
                     <NavLink to="/home"><button>Home</button></NavLink>
                     <NavLink to="/profile"><button>Profile</button></NavLink>

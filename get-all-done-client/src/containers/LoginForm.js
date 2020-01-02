@@ -30,12 +30,11 @@ export class LoginForm extends Component {
         api.auth.login(this.state.fields).then(res => {
             if (!res.error) {
                 onLogin(res);
-                this.props.history.push('/');
             } else {
                 this.setState({ error: true });
             }
         });
-        api.user.currentUserStatus(loginAs)
+        api.user.setCurrentUserType(loginAs)
         onLoggedIn() //******* 
     }
 

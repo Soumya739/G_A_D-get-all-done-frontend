@@ -1,36 +1,49 @@
 const API_ROOT = `http://localhost:3000/api/v1`;
 const token = localStorage.getItem('token');
 const URL = "http://localhost:3000"
+let User_type = ""
+const PostsURL = "http://localhost:3000/posts"
+const User_Posts = "http://localhost:3000/user_posts"
+const ListContractorsURL = "http://localhost:3000/list_contractors"
+// const headers = {
+//     'Content-Type': 'application/json',
+//     Accepts: 'application/json',
+//     Authorization: localStorage.getItem('token')
+// };
 
-const headers = {
-    'Content-Type': 'application/json',
-    Accepts: 'application/json',
-    Authorization: token
-};
-
-
+const setCurrentUserType = (type) => {
+    User_type = type
+}
 const login = data => {
     return fetch(`${API_ROOT}/auth`, {
         method: 'POST',
-        headers,
+        headers: {
+            'Content-Type': 'application/json',
+            Accepts: 'application/json',
+            Authorization: localStorage.getItem('token')
+        },
         body: JSON.stringify(data)
     }).then(resp => resp.json());
 };
 
 const getCurrentUser = () => {
-    console.log("getting current user", headers)
     return fetch(`${API_ROOT}/current_user`, {
-        headers
-    }).then(res => {
-        console.log(res)
-        return res.json()
-    });
+        headers: {
+            'Content-Type': 'application/json',
+            Accepts: 'application/json',
+            Authorization: localStorage.getItem('token')
+        },
+    })
+        .then(handleErrors)
+        .then(res => {
+            console.log(res)
+            return res.json()
+        });
 };
 
-const currentUserStatus = (userStatus) => {
-    return userStatus
+const getcurrentUserType = () => {
+    return User_type
 }
-
 
 function handleErrors(response) {
     if (!response.ok) {
@@ -39,32 +52,35 @@ function handleErrors(response) {
     return response;
 }
 
-
 const createUser = (data) => {
     return fetch(URL + "/users", {
         method: "POST",
         headers: {
             'Content-Type': 'application/json',
-            Accepts: 'application/json'
+            Accepts: 'application/json',
+            Authorization: localStorage.getItem('token')
         },
         body: JSON.stringify({
-            username: data.username,
-            email: data.email,
-            city: data.city,
-            country: data.country,
-            phone: data.phone,
-            contractee: data.contractee,
-            contractor: data.contractor
+            user: {
+                username: data.username,
+                email: data.email,
+                city: data.city,
+                country: data.country,
+                phone: data.phone,
+                contractee: data.contractee,
+                contractor: data.contractor,
+                password: data.password
+            }
         })
     })
         .then(response => response.json())
         .then(user => {
             console.log(user);
             if (user.contractor) {
-                currentUserStatus("contractor")
+                User_type = "contractor"
                 return createContractor(user, data)
             } else {
-                currentUserStatus("contractee")
+                User_type = "contractee"
                 return createContractee(user, data)
             }
         })
@@ -76,128 +92,131 @@ const createContractor = (user, data) => {
         method: "POST",
         headers: {
             'Content-Type': 'application/json',
-            Accepts: 'application/json'
+            Accepts: 'application/json',
+            Authorization: localStorage.getItem('token')
         },
         body: JSON.stringify({
             user_id: user.id,
             projects_completed: 0,
-            password: data.password,
             services: data.services
         })
     }).then(handleErrors)
         .then(response => response.json())
-    // .then(currentUserStatus("contractor"))
 }
 
 const createContractee = (user, data) => {
     console.log("creating contractee")
     return fetch(URL + "/contractees", {
         method: "POST",
-        headers,
+        headers: {
+            'Content-Type': 'application/json',
+            Accepts: 'application/json',
+            Authorization: localStorage.getItem('token')
+        },
         body: JSON.stringify({
-            user_id: user.id,
-            password: data.password
+            user_id: user.id
         })
     }).then(handleErrors)
         .then(response => response.json())
-    // .then(currentUserStatus("contractee"))
 }
+
+const createPost = (data) => {
+    return fetch(PostsURL, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+            Accepts: 'application/json',
+            Authorization: localStorage.getItem('token')
+        },
+        body: JSON.stringify({
+            title: data.title,
+            description: data.description,
+            category: data.category
+        })
+    }).then(handleErrors)
+        .then(resp => resp.json())
+}
+
+const fetchPosts = () => {
+    let url = (User_type === "contractee") ? User_Posts : PostsURL
+    return fetch(url, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+            Accepts: 'application/json',
+            Authorization: localStorage.getItem('token')
+        },
+    })
+        .then(handleErrors)
+        .then(resp => resp.json())
+}
+
+const updatePosts = (postId, data) => {
+    return fetch(PostsURL + '/' + postId, {
+        method: "PUT",
+        headers: {
+            'Content-Type': 'application/json',
+            Accepts: 'application/json',
+            Authorization: localStorage.getItem('token')
+        },
+        body: JSON.stringify({
+            title: data.title,
+            description: data.description,
+            category: data.category
+        })
+    }).then(handleErrors)
+        .then(resp => resp.json())
+}
+
+const getContractors = (category) => {
+    return fetch(ListContractorsURL, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+            Accepts: 'application/json',
+            Authorization: localStorage.getItem('token')
+        },
+        body: JSON.stringify({
+            category: category
+        })
+    })
+        .then(handleErrors)
+        .then(resp => resp.json())
+}
+
+const assignPostToContractor = (postId, contractorEmail) => {
+    return fetch(PostsURL + '/' + postId, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+            Accepts: 'application/json',
+            Authorization: localStorage.getItem('token')
+        },
+        body: JSON.stringify({
+            contractorEmail: contractorEmail,
+            postId: postId
+        })
+    }).then(handleErrors)
+        .then(resp => resp.json())
+}
+
 export const api = {
     auth: {
         login,
         getCurrentUser
     },
-    // paintings: {
-    //   getPaintings
-    // }
     user: {
         createUser,
-        currentUserStatus
+        getcurrentUserType,
+        setCurrentUserType
+    },
+    posts: {
+        fetchPosts,
+        createPost,
+        updatePosts,
+        assignPostToContractor
+    },
+    contractors: {
+        getContractors
     }
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// fetch(URL + "/users", {
-//     method: "POST",
-//     headers: {
-//         'Content-Type': 'application/json',
-//         Accepts: 'application/json'
-//     },
-//     body: JSON.stringify({
-//         username: username,
-//         email: email,
-//         city: city,
-//         country: country,
-//         phone: phone,
-//         contractee: contractee,
-//         contractor: contractor
-//     })
-// }).then(handleErrors)
-//     .then(response => response.json())
-//     .then(user => {
-//         console.log(user);
-//         if (contractor) {
-//             // createContractor(user, data)
-//             console.log("creating contractor")
-//             fetch(URL + "/contractors", {
-//                 method: "POST",
-//                 headers: {
-//                     'Content-Type': 'application/json',
-//                     Accepts: 'application/json'
-//                 },
-//                 body: JSON.stringify({
-//                     user_id: user.id,
-//                     projects_completed: 0,
-//                     password: password,
-//                     services: services
-//                 })
-//             })
-//                 .then(handleErrors)
-//                 .then(response => response.json())
-//                 .then(json => {
-//                     console.log(json)
-//                     this.currentUserStatus("contractor")
-//                 })
-//             // .then(currentUser => {
-//             //     onSetCurrentUser("contractor")
-//             // })
-
-//         } else {
-//             // createContractee(user, data)
-//             console.log("creating contractee")
-//             fetch(URL + "/contractees", {
-//                 method: "POST",
-//                 headers: {
-//                     'Content-Type': 'application/json',
-//                     Accepts: 'application/json'
-//                 },
-//                 body: JSON.stringify({
-//                     user_id: user.id,
-//                     password: password
-//                 })
-//             }).then(handleErrors)
-//                 .then(response => response.json())
-//                 .then(json => {
-//                     console.log(json)
-//                     this.currentUserStatus("contractee")
-//                 })
-//             //         .then(currentUser => {
-//             //             onSetCurrentUser("contractee")
-//             //         }
-//         }
-//     })

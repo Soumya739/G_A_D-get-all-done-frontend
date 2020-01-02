@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
 import Home from '../components/Home'
 // import { Redirect, useHistory } from 'react-router-dom';
-// import { api } from '../services/api';
+import { api } from '../services/api';
 
-// const PostsURL = "http://localhost:3000/posts"
+
 class App extends Component {
     constructor() {
         super()
@@ -11,31 +11,27 @@ class App extends Component {
             signup: false,
             login: false,
             loggedIn: false,
-            posts: [],
             auth: {
                 user: {}
             }
         }
     }
 
-    // componentDidMount() {
-    //     const token = localStorage.getItem('token');
-    //     if (token) {
-    //         // make a request to the backend and find our user
-    //         api.auth.getCurrentUser().then(user => {
-    //             console.log(user)
-    //             const updatedState = { ...this.state.auth, user: user };
-    //             this.setState({ auth: updatedState });
-    //         });
-    //     }
-
-    //     fetch(PostsURL)
-    //         .then(resp => resp.json())
-    //         .then(posts => {
-    //             console.log(posts)
-    //             this.setState({ posts: posts })
-    //         })
-    // }
+    componentDidMount() {
+        const token = localStorage.getItem('token');
+        if (token) {
+            // make a request to the backend and find our user
+            api.auth.getCurrentUser().then(user => {
+                console.log(user)
+                const updatedState = { ...this.state.auth, user: user };
+                this.setState({ auth: updatedState });
+            })
+                .catch(error => {
+                    console.log("here");
+                    localStorage.removeItem('token');
+                });
+        }
+    }
 
     onSignUp = () => {
         this.setState({ signup: !this.state.signup, login: false })
@@ -66,7 +62,6 @@ class App extends Component {
                     signup={signup}
                     login={login}
                     loggedIn={loggedIn}
-                    posts={posts}
                     onSignUp={this.onSignUp}
                     onLogin={this.onLogin}
                     onLoggedIn={this.onLoggedIn}

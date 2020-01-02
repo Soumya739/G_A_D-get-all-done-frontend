@@ -18,7 +18,7 @@ export class Home extends Component {
                     <Route exact path="/signup" render={() => <SignupForm onSignUp={onSignUp} onLoggedIn={onLoggedIn} signup={signup} onLogin={onLogin} />} />
                     <Route exact path="/login" render={() => <LoginForm onLoggedIn={onLoggedIn} login={login} onLogin={onLogin} />} />
                     <Route exact path="/post/new" render={() => <NewPostForm />} />
-                    <Route exact path="/timeline" render={() => <Timeline posts={posts} />} />
+                    <Route exact path="/timeline" render={() => <Timeline />} />
                     <Route exact path="/posts" render={() => <AllPosts posts={posts} />} />
                 </Router>
             </div>

@@ -15,7 +15,7 @@ export class PostDetail extends Component {
         this.setState({ edit: !this.state.edit })
     }
     render() {
-        let { title, discription, created_at, updated_at } = this.props.post
+        let { title, description, created_at, updated_at, category } = this.props.post
         if (this.state.edit) {
             return (
                 <div>
@@ -26,7 +26,8 @@ export class PostDetail extends Component {
         return (
             <div>
                 Title: {title}<br />
-                Discription: {discription}<br />
+                Description: {description}<br />
+                Categories: {category.tag}<br />
                 Created: {created_at}<br />
                 Updated: {updated_at}<br />
                 <button onClick={this.onEditPost}>Edit</button>

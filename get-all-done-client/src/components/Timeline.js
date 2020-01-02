@@ -1,12 +1,28 @@
 import React, { Component } from 'react'
 import PostDetail from './PostDetail'
+import { api } from '../services/api'
+
+
 
 export class Timeline extends Component {
-    // let {posts} = this.props
+    constructor() {
+        super();
+        this.state = {
+            posts: [],
+            error: false,
+        }
+    }
+    componentDidMount() {
+        api.posts.fetchPosts().then(res => {
+            if (!res.error) {
+                this.setState({ posts: res })
+            } else {
+                this.setState({ error: true });
+            }
+        })
+    }
     getAllPostsOfCurrentUser = () => {
-        let { posts } = this.props
-        console.log(posts)
-        return posts.map((post) => {
+        return this.state.posts.map((post) => {
             return <><PostDetail post={post} key={post.id} /><br /> </>
         })
     }
