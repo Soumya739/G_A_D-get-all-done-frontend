@@ -6,7 +6,8 @@ export class Navbar extends Component {
 
     displayNavbar = () => {
         const { onLogin, onSignUp, onLogOut } = this.props
-        if (!!(localStorage.getItem("token"))) {
+        let token = localStorage.getItem("token")
+        if (token && token !== "undefined") {
             let currentUserType = api.user.getcurrentUserType()
             if (currentUserType === "contractee") {
                 return <>

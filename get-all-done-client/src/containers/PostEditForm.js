@@ -1,7 +1,5 @@
 import React, { Component } from 'react'
-// import { NavLink } from 'react-router-dom';
 import { api } from '../services/api'
-import { Redirect } from 'react-router-dom'
 
 export class PostEditForm extends Component {
     constructor(props) {

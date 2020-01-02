@@ -1,18 +1,34 @@
 import React, { Component } from 'react'
 import PostDetail from './PostDetail'
+import { api } from '../services/api'
 
 export class AllPosts extends Component {
-    getAllPosts = () => {
-        let { posts } = this.props
-        console.log(posts)
-        return posts.map((post) => {
+    constructor() {
+        super()
+        this.state = {
+            posts: []
+        }
+    }
+    componentDidMount() {
+        api.posts.fetchPosts().then(res => {
+            if (!res.error) {
+                this.setState({ posts: res })
+            } else {
+                return <h3>No posts to show</h3>
+            }
+        })
+    }
+
+    displayAllPosts = () => {
+
+        return this.state.posts.map((post) => {
             return <><PostDetail post={post} key={post.id} /><br /> </>
         })
     }
     render() {
         return (
             <div>
-                {this.getAllPosts()}
+                {this.displayAllPosts()}
             </div>
         )
     }

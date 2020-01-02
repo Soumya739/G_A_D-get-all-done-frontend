@@ -57,8 +57,8 @@ export class SignupForm extends Component {
         api.user.createUser(this.state).then(res => {
             console.log("resp", res)
             if (!res.error) {
-                onLogin(res);
-                // this.props.history.push('/');
+                onLogin(res)
+                return <Redirect to="/login" />
             } else {
                 this.setState({ error: true });
             }
@@ -78,9 +78,6 @@ export class SignupForm extends Component {
                 contractor: false,
                 password: ""
             }))
-
-            .catch(error => console.log(error));
-
     }
 
     render() {
@@ -111,7 +108,7 @@ export class SignupForm extends Component {
                         {contractor ?
                             <>
                                 <label>You selected contractor</label><br />
-                                <label>Services</label>
+                                <label>Service: </label>
                                 <input type='text' id='services' placeholder='services' onChange={(e) => this.handleInputData(e)} value={services} required /><br />
                             </>
                             : null}

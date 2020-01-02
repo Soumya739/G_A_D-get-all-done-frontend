@@ -2,8 +2,6 @@ import React, { Component } from 'react'
 import { NavLink } from 'react-router-dom';
 import { api } from '../services/api'
 
-const URL = "http://localhost:3000"
-
 export class NewPostForm extends Component {
     constructor() {
         super();

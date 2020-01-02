@@ -1,10 +1,11 @@
 const API_ROOT = `http://localhost:3000/api/v1`;
-const token = localStorage.getItem('token');
+// const token = localStorage.getItem('token');
 const URL = "http://localhost:3000"
 let User_type = ""
 const PostsURL = "http://localhost:3000/posts"
 const User_Posts = "http://localhost:3000/user_posts"
 const ListContractorsURL = "http://localhost:3000/list_contractors"
+const UserUrl = "http://localhost:3000/users"
 // const headers = {
 //     'Content-Type': 'application/json',
 //     Accepts: 'application/json',
@@ -40,6 +41,19 @@ const getCurrentUser = () => {
             return res.json()
         });
 };
+
+const getUserDetails = (userId) => {
+    return fetch(UserUrl + "/" + userId, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+            Accepts: 'application/json',
+            Authorization: localStorage.getItem('token')
+        },
+    })
+        .then(handleErrors)
+        .then(resp => resp.json())
+}
 
 const getcurrentUserType = () => {
     return User_type
@@ -98,7 +112,7 @@ const createContractor = (user, data) => {
         body: JSON.stringify({
             user_id: user.id,
             projects_completed: 0,
-            services: data.services
+            category: data.services
         })
     }).then(handleErrors)
         .then(response => response.json())
@@ -224,7 +238,8 @@ export const api = {
     user: {
         createUser,
         getcurrentUserType,
-        setCurrentUserType
+        setCurrentUserType,
+        getUserDetails
     },
     posts: {
         fetchPosts,

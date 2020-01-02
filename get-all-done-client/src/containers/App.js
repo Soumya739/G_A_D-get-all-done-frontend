@@ -27,7 +27,6 @@ class App extends Component {
                 this.setState({ auth: updatedState });
             })
                 .catch(error => {
-                    console.log("here");
                     localStorage.removeItem('token');
                 });
         }
@@ -55,7 +54,7 @@ class App extends Component {
     }
 
     render() {
-        let { signup, login, loggedIn, posts } = this.state
+        let { signup, login, loggedIn, auth } = this.state
         return (
             <div>
                 <Home
@@ -66,6 +65,7 @@ class App extends Component {
                     onLogin={this.onLogin}
                     onLoggedIn={this.onLoggedIn}
                     onLogOut={this.onLogOut}
+                    auth={auth}
                 />
             </div>
         )
