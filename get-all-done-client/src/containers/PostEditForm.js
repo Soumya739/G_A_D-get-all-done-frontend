@@ -9,7 +9,7 @@ export class PostEditForm extends Component {
         this.state = {
             title: this.props.post.title,
             description: this.props.post.description,
-            category: this.props.post.category.tag,
+            category: this.props.post.category,
             errorReason: ""
         }
     }
@@ -23,7 +23,9 @@ export class PostEditForm extends Component {
         e.preventDefault()
         api.posts.updatePosts(post.id, this.state).then(res => {
             if (!res.error) {
+                console.log("Updated post", res)
                 this.props.onEditPost()
+                this.props.onUpdatePost(res)
             } else {
                 this.setState({ errorReason: res.error });
             }

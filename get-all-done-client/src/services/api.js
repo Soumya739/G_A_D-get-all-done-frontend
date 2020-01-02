@@ -165,7 +165,23 @@ const updatePosts = (postId, data) => {
             category: data.category
         })
     }).then(handleErrors)
-        .then(resp => resp.json())
+        .then(resp => {
+            let json = resp.json()
+            console.log(json)
+            return json
+        })
+}
+
+const deletePost = (postId) => {
+    return fetch(PostsURL + '/' + postId, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            Accepts: 'application/json',
+            Authorization: localStorage.getItem('token')
+        }
+    })
+        .then(response => response.json());
 }
 
 const getContractors = (category) => {
@@ -214,7 +230,8 @@ export const api = {
         fetchPosts,
         createPost,
         updatePosts,
-        assignPostToContractor
+        assignPostToContractor,
+        deletePost
     },
     contractors: {
         getContractors
